@@ -6,14 +6,14 @@ It is licensed under [MIT](https://opensource.org/licenses/MIT).
 
 <!--[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.riversun/slacklet/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.riversun/slacklet)-->
 
-# Get your bot token
+# Get your bot token from Slack
 
 First of all,get your bot token from here.  
 https://my.slack.com/services/new/bot
 
 # Quick Examples
 
-## ** 1.Handling User Posted Message **
+##  1.Reply to user posted message 
 
 ```java
 public class Example00 {
@@ -81,7 +81,7 @@ If you want to reply only to messages that came to the **random** channel, chang
 
 <hr>
 
-## ** 2.Handling Direct Message and Mentioned Message **
+##  2.Receive direct Message and mentioned Message 
 
 ```java
 
@@ -140,7 +140,7 @@ public class Example01 {
 
 <hr>
 
-## ** 3.Sending Direct Message to user **
+##  3.Sending Direct Message to user 
 
 ```java
 public class Example02 {
@@ -173,7 +173,7 @@ public class Example02 {
 
 <hr>
 
-## ** 4.Sending message to specified channel **
+##  4.Sending message to specified channel 
 
 ```java
 public class Example03 {
@@ -205,7 +205,7 @@ public class Example03 {
 
 <hr>
 
-## **5.Use session specific to the user**
+## 5.Use session specific to the user
 If you want to make **conversational bot** , the session will be useful for you.  
 When interacting with the user, it is necessary to keep the context for each user.  
 Then it establishes a conversation with the user.
