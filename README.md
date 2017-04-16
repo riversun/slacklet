@@ -60,23 +60,23 @@ In the example above, it responds to messages that came to all channels the BOT 
 If you want to reply only to messages that came to the **random** channel, change as follows.
 
 ```java
-			@Override
-			public void onMessagePosted(SlackletRequest req, SlackletResponse resp) {
-				// BOT received direct message from user
+@Override
+public void onMessagePosted(SlackletRequest req, SlackletResponse resp) {
+	// BOT received direct message from user
 
-				SlackChannel channel = req.getChannel();
+	SlackChannel channel = req.getChannel();
 
-				if ("random".equals(channel.getName())) {
+	if ("random".equals(channel.getName())) {
 
-					// get message content
-					String content = req.getContent();
+		// get message content
+		String content = req.getContent();
 
-					// reply to the user
-					resp.reply("You say '" + content + "'.");
+		// reply to the user
+		resp.reply("You say '" + content + "'.");
 
-				}
+	}
 
-			}
+}
 ```
 
 <hr>
@@ -264,10 +264,10 @@ You can store user specific in it.
 # Maven
 
 ```xml
-		<dependency>
-			<groupId>org.riversun</groupId>
-			<artifactId>slacklet</artifactId>
-			<version>1.0.0</version>
-		</dependency>
+<dependency>
+	<groupId>org.riversun</groupId>
+	<artifactId>slacklet</artifactId>
+	<version>1.0.0</version>
+</dependency>
 
 ```
