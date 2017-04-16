@@ -320,7 +320,7 @@ public class SlackletService {
 		}
 	}
 
-	SlackletSession getUserSession(SlackMessagePosted msg) {
+	SlackletSession getUserSlackletSession(SlackMessagePosted msg) {
 
 		final SlackUser sender = msg.getSender();
 		final String userId = sender.getId();

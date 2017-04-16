@@ -64,7 +64,7 @@ class SletListenerMessagePosted implements SlackMessagePostedListener {
 		// make sure this event is SLACK_MESSAGE_POSTED.
 		if (msg.getEventType() == SlackEventType.SLACK_MESSAGE_POSTED) {
 
-			final SlackletSession userSession = mService.getUserSession(msg);
+			final SlackletSession userSession = mService.getUserSlackletSession(msg);
 
 			final SlackletRequest req = new SlackletRequest(mService, msg, userSession);
 			final SlackletResponse resp = new SlackletResponse(mService, msg);
