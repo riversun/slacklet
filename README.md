@@ -28,7 +28,7 @@ public class Example00 {
 
 			@Override
 			public void onMessagePosted(SlackletRequest req, SlackletResponse resp) {
-				// BOT received direct message from user
+				// user posted message and BOT intercepted it
 
 				// get message content
 				String content = req.getContent();
@@ -62,7 +62,7 @@ If you want to reply only to messages that came to the **random** channel, chang
 ```java
 @Override
 public void onMessagePosted(SlackletRequest req, SlackletResponse resp) {
-	// BOT received direct message from user
+	//  user posted message and BOT intercepted it
 
 	SlackChannel channel = req.getChannel();
 
@@ -108,7 +108,7 @@ public class Example01 {
 
 			@Override
 			public void onMentionedMessagePosted(SlackletRequest req, SlackletResponse resp) {
-				// BOT received mentioned message such like "@bot How are you?"
+				// BOT received message mentioned to the BOT such like "@bot How are you?"
 				// from user.
 
 				String content = req.getContent();
