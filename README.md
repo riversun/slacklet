@@ -4,7 +4,7 @@ You can make your interactive Slack Bot easily and rapidly.
 
 It is licensed under [MIT](https://opensource.org/licenses/MIT).
 
-<!--[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.riversun/slacklet/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.riversun/slacklet)-->
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.riversun/slacklet/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.riversun/slacklet)
 
 # Get your bot token from Slack
 
