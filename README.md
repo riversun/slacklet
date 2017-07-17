@@ -261,6 +261,16 @@ public class Example04 {
 You can store user specific in it.   
 <img src="https://riversun.github.io/slacklet/img/ex04.png"/>  
 
+## Integrate with Watson
+
+As in the example below, watson handles the conversation.
+
+<img src="https://riversun.github.io/wcs/img/watson_slacklet_en.gif">
+
+Source code is in the following repository.  
+
+https://github.com/riversun/watson-java-slackbot
+
 # Maven
 
 ```xml
