@@ -205,13 +205,46 @@ public class Example03 {
 
 <hr>
 
-## 5.Use session specific to the user
+## 5.Sending a image
+You can send image to slack by using attachment.
+
+```java
+
+public class Example04 {
+
+	public static void main(String[] args) throws IOException {
+
+		String botToken = "[YOUR_BOT_TOKEN]";
+
+		SlackletService slackService = new SlackletService(botToken);
+		slackService.start();
+
+		final String imageUrl = "https://riversun.github.io/img/riversun_144.png";
+
+		final SlackAttachment attchImage = new SlackAttachment();
+		attchImage.setTitle("");
+		attchImage.setText("");
+		attchImage.setFallback("");
+		attchImage.setColor("#ffffff");
+		attchImage.setImageUrl(imageUrl);
+
+		String channelName = "random";
+		slackService.sendMessageTo(channelName, "Hello!",attchImage);
+
+		slackService.stop();
+
+	}
+
+}
+```
+
+## 6.Use session specific to the user
 If you want to make **conversational bot** , the session will be useful for you.  
 When interacting with the user, it is necessary to keep the context for each user.  
 Then it establishes a conversation with the user.
 
 ```java
-public class Example04 {
+public class Example05 {
 
 	public static void main(String[] args) throws IOException {
 
@@ -277,7 +310,7 @@ https://github.com/riversun/watson-java-slackbot
 <dependency>
 	<groupId>org.riversun</groupId>
 	<artifactId>slacklet</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 </dependency>
 
 ```
