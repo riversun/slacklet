@@ -310,7 +310,7 @@ https://github.com/riversun/watson-java-slackbot
 <dependency>
 	<groupId>org.riversun</groupId>
 	<artifactId>slacklet</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 </dependency>
 
 ```
