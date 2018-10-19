@@ -1,26 +1,3 @@
-/*
- * Slacklet 
- * 
- * Copyright 2016 Tom Misawa, riversun.org@gmail.com
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in the 
- * Software without restriction, including without limitation the rights to use, 
- * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the 
- * Software, and to permit persons to whom the Software is furnished to do so, 
- * subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all 
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- *  INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
- * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
- * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
- * IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- * 
- */
 package org.riversun.slacklet;
 
 import java.io.IOException;
@@ -33,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.riversun.slacklet.webhook.SlackletWebServer;
 import org.riversun.xternal.simpleslackapi.ChannelHistoryModule;
 import org.riversun.xternal.simpleslackapi.SlackAttachment;
 import org.riversun.xternal.simpleslackapi.SlackChannel;
@@ -74,6 +52,7 @@ import org.riversun.xternal.simpleslackapi.listeners.SlackUserChangeListener;
 import org.riversun.xternal.simpleslackapi.replies.SlackMessageReply;
 
 /**
+ * SlackletService
  * 
  * @author Tom Misawa (riversun.org@gmail.com)
  *
@@ -95,6 +74,8 @@ public class SlackletService {
 	private final ExecutorService mExecutor = Executors.newCachedThreadPool(); // newFixedThreadPool(20);
 
 	private SletPersistManager mSessionPersistenceManager = new SletDefaultPersistManager();
+
+	private SlackletWebServer mWebServer;
 
 	/**
 	 * 
@@ -126,22 +107,39 @@ public class SlackletService {
 	}
 
 	/**
-	 * Stop slacklet service
+	 * Start slacklet service with webhook support
 	 * 
+	 * @param webhookPath
+	 * @param port
 	 * @throws IOException
 	 */
-	public void stop() throws IOException {
-		mBotSession.disconnect();
+	public void startWithWebHook(String webhookPath, int port) throws IOException {
+
+		this.start();
+		if (mWebServer == null) {
+			mWebServer = new SlackletWebServer();
+
+		} else {
+			mWebServer.stopServer();
+		}
+		mWebServer.startServer(webhookPath, port);
 	}
 
-	/**
-	 * Add slacklet for all channels
-	 * 
-	 * @param slacklet
-	 */
-	public void addSlacklet(Slacklet slacklet) {
-		if (slacklet != null) {
-			mSlackletList.add(slacklet);
+	public void stop() throws IOException {
+		mBotSession.disconnect();
+		if (mWebServer != null) {
+			mWebServer.stopServer();
+			mWebServer = null;
+		}
+	}
+
+	public void startWebhook(String webhookPath, int port) {
+
+	}
+
+	public void addSlacklet(Slacklet slackWrap) {
+		if (slackWrap != null) {
+			mSlackletList.add(slackWrap);
 		}
 	}
 
@@ -266,13 +264,6 @@ public class SlackletService {
 		return mExecutor;
 	}
 
-	/**
-	 * Send message to channel specified by channel name
-	 * 
-	 * @param channelName
-	 * @param message
-	 * @return
-	 */
 	public boolean sendMessageTo(String channelName, String message) {
 		final SlackChannel channel = mBotSession.findChannelByName(channelName);
 		if (channel != null) {
@@ -282,14 +273,6 @@ public class SlackletService {
 		return false;
 	}
 
-	/**
-	 * Send message to channel specified by channel name with attachment
-	 * 
-	 * @param channelName
-	 * @param message
-	 * @param attch
-	 * @return
-	 */
 	public boolean sendMessageTo(String channelName, String message, SlackAttachment attch) {
 		final SlackChannel channel = mBotSession.findChannelByName(channelName);
 		if (channel != null) {
@@ -299,22 +282,6 @@ public class SlackletService {
 		return false;
 	}
 
-	/**
-	 * Send message with attachment like image to channel
-	 * 
-	 * @param channel
-	 * @param message
-	 * @param attch
-	 * <br>
-	 *            <code>
-        SlackAttachment attch = new SlackAttachment();
-        attch.setTitle("");
-        attch.setText("");
-        attch.setFallback("");
-        attch.setColor("#ffffff");
-        attch.setImageUrl(imageUrl);
-        </code>
-	 */
 	public SlackMessageHandle<SlackMessageReply> sendMessageTo(SlackChannel channel, String message, SlackAttachment attch) {
 
 		SlackMessageHandle<SlackMessageReply> sendMessage = getSlackSession().sendMessage(channel, message, attch);
@@ -337,12 +304,6 @@ public class SlackletService {
 		return deleteMessage;
 	}
 
-	/**
-	 * Send message to channel
-	 * 
-	 * @param channel
-	 * @param message
-	 */
 	public SlackMessageHandle<SlackMessageReply> sendMessageTo(SlackChannel channel, String message) {
 
 		SlackMessageHandle<SlackMessageReply> sendMessage = getSlackSession().sendMessage(channel, message);
@@ -350,23 +311,6 @@ public class SlackletService {
 
 	}
 
-	/**
-	 * Send direct message to user specified by userName
-	 * 
-	 * @param userName
-	 * @param message
-	 * @param attch
-	 * 
-	 *            <code>
-        SlackAttachment attch = new SlackAttachment();
-        attch.setTitle("");
-        attch.setText("");
-        attch.setFallback("");
-        attch.setColor("#ffffff");
-        attch.setImageUrl(imageUrl);
-        </code>
-	 * @return
-	 */
 	public boolean sendDirectMessageTo(String userName, String message, SlackAttachment attch) {
 		final SlackUser user = mBotSession.findUserByUserName(userName);
 		if (user != null) {
@@ -377,13 +321,6 @@ public class SlackletService {
 
 	}
 
-	/**
-	 * Send direct message to user specified by userName
-	 * 
-	 * @param userName
-	 * @param message
-	 * @return
-	 */
 	public boolean sendDirectMessageTo(String userName, String message) {
 		final SlackUser user = mBotSession.findUserByUserName(userName);
 		if (user != null) {
@@ -394,12 +331,6 @@ public class SlackletService {
 
 	}
 
-	/**
-	 * Send direct message to user
-	 * 
-	 * @param user
-	 * @param message
-	 */
 	public SlackMessageHandle<SlackMessageReply> sendDirectMessageTo(SlackUser user, String message) {
 
 		final SlackChannel dmChannel = getDirectMessageChannel(user);
@@ -411,12 +342,6 @@ public class SlackletService {
 		return null;
 	}
 
-	/**
-	 * Send direct message with attachment to user
-	 * 
-	 * @param user
-	 * @param message
-	 */
 	public SlackMessageHandle<SlackMessageReply> sendDirectMessageTo(SlackUser user, String message, SlackAttachment attch) {
 
 		final SlackChannel dmChannel = getDirectMessageChannel(user);
@@ -433,29 +358,18 @@ public class SlackletService {
 		final SlackUser sender = msg.getSender();
 		final String userId = sender.getId();
 
-		SlackletSession slackletSession = mUserSessions.get(userId);
-		if (slackletSession == null) {
-			slackletSession = new SlackletSession(sender, mSessionPersistenceManager);
-			mUserSessions.put(userId, slackletSession);
+		SlackletSession slackWrapSession = mUserSessions.get(userId);
+		if (slackWrapSession == null) {
+			slackWrapSession = new SlackletSession(sender, mSessionPersistenceManager);
+			mUserSessions.put(userId, slackWrapSession);
 		}
-		return slackletSession;
+		return slackWrapSession;
 	}
 
-	/**
-	 * Set session persistence manager if you want to save session data
-	 * persistently.
-	 * 
-	 * @param sessionPersistenceManager
-	 */
 	public void setSessionPersistenceManager(SletPersistManager sessionPersistenceManager) {
 		mSessionPersistenceManager = sessionPersistenceManager;
 	}
 
-	/**
-	 * Returns this BOT
-	 * 
-	 * @return
-	 */
 	public SlackUser getBot() {
 		return mBot;
 	}
@@ -464,11 +378,6 @@ public class SlackletService {
 		return mBotSession;
 	}
 
-	/**
-	 * return user of bot that has this botToken
-	 * 
-	 * @return
-	 */
 	private SlackUser getBotUser() {
 
 		final SlackPersona persona = mBotSession.sessionPersona();
@@ -490,12 +399,6 @@ public class SlackletService {
 		return botUser;
 	}
 
-	/**
-	 * Returns direct message channel for the specified
-	 * 
-	 * @param user
-	 * @return
-	 */
 	public SlackChannel getDirectMessageChannel(SlackUser user) {
 
 		if (mDirectMessageChannelMap == null) {
@@ -509,9 +412,6 @@ public class SlackletService {
 
 	}
 
-	/**
-	 * Update cache of direct message channel
-	 */
 	private void updateDirectMessageChannel() {
 
 		mDirectMessageChannelMap.clear();
