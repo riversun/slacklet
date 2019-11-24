@@ -406,7 +406,11 @@ public class SlackletService {
 			updateDirectMessageChannel();
 		}
 
-		final SlackChannel dmChannel = mDirectMessageChannelMap.get(user.getId());
+		SlackChannel dmChannel = mDirectMessageChannelMap.get(user.getId());
+
+		if (dmChannel == null) {
+			dmChannel = mBotSession.openDirectMessageChannel(user).getReply().getSlackChannel();
+		}
 
 		return dmChannel;
 
